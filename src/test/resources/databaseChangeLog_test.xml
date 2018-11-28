@@ -6,4 +6,48 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="databaseChangeLog.xml"/>
+    <changeSet id="1-test" author="maxim.alexandrov">
+        <insert tableName="teacher">
+            <column name="name" value="Teacher1"/>
+        </insert>
+        <insert tableName="teacher">
+            <column name="name" value="Teacher2"/>
+        </insert>
+        <insert tableName="teacher">
+            <column name="name" value="Teacher3"/>
+        </insert>
+        <insert tableName="groups">
+            <column name="name" value="A"/>
+        </insert>
+        <insert tableName="groups">
+            <column name="name" value="B"/>
+        </insert>
+        <insert tableName="student">
+            <column name="name" value="Student1"/>
+            <column name="age" value="18"/>
+            <column name="groups_id" value="1"/>
+        </insert>
+        <insert tableName="student">
+            <column name="name" value="Student2"/>
+            <column name="age" value="19"/>
+            <column name="groups_id" value="1"/>
+        </insert>
+        <insert tableName="student">
+            <column name="name" value="Student3"/>
+            <column name="age" value="20"/>
+            <column name="groups_id" value="2"/>
+        </insert>
+        <insert tableName="groups_and_teachers">
+            <column name="groups_id" value="1"/>
+            <column name="teacher_id" value="1"/>
+        </insert>
+        <insert tableName="groups_and_teachers">
+            <column name="groups_id" value="1"/>
+            <column name="teacher_id" value="2"/>
+        </insert>
+        <insert tableName="groups_and_teachers">
+            <column name="groups_id" value="2"/>
+            <column name="teacher_id" value="3"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
