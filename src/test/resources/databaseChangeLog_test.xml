@@ -6,7 +6,4 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="databaseChangeLog.xml"/>
-    <!--<changeSet id="1-test" author="maxim.alexandrov">-->
-        <!---->
-    <!--</changeSet>-->
 </databaseChangeLog>
