@@ -42,6 +42,16 @@
         <addForeignKeyConstraint baseTableName="groups_and_teachers" baseColumnNames="teacher_id"
                                  constraintName="groups_and_teachers_teacher_id"
                                  referencedTableName="teacher" referencedColumnNames="id"/>
+        <addUniqueConstraint
+                columnNames="id, name"
+                constraintName="teacher_name"
+                tableName="teacher"
+        />
+        <addUniqueConstraint
+                columnNames="id, name"
+                constraintName="groups_name"
+                tableName="groups"
+        />
 
     </changeSet>
     <changeSet id="2" author="maxim.alexandrov">

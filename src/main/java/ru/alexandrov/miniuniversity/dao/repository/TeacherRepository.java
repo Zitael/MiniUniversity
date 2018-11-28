@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.alexandrov.miniuniversity.dao.entity.Teacher;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
-    Teacher findFirstByNameIsLike(String name);
+    Teacher findByName(String name);
 }

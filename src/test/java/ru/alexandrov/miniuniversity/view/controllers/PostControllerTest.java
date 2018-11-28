@@ -1,9 +1,11 @@
 package ru.alexandrov.miniuniversity.view.controllers;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -124,19 +126,20 @@ public class PostControllerTest {
         mockMvc.perform(
                 post("/getStudentsByGroup")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content("{ \n" +
-                                "  \"group\" : \"A\" \n" +
-                                "}"
-                        ))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[\n" +
-                        "    {\n" +
-                        "        \"id\": 1,\n" +
-                        "        \"name\": \"Student1\",\n" +
-                        "        \"age\": 18,\n" +
-                        "        \"groupName\": \"A\"\n" +
-                        "    }\n" +
-                        "]"));
+                        .content("[\n" +
+                                "    {\n" +
+                                "        \"id\": 2,\n" +
+                                "        \"name\": \"Student2\",\n" +
+                                "        \"age\": 19,\n" +
+                                "        \"groupName\": \"A\"\n" +
+                                "    },\n" +
+                                "    {\n" +
+                                "        \"id\": 1,\n" +
+                                "        \"name\": \"Student1\",\n" +
+                                "        \"age\": 18,\n" +
+                                "        \"groupName\": \"A\"\n" +
+                                "    }\n" +
+                                "]"));
     }
 
     @Test
@@ -162,6 +165,12 @@ public class PostControllerTest {
                         ))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
+                        "    {\n" +
+                        "        \"id\": 2,\n" +
+                        "        \"name\": \"Student2\",\n" +
+                        "        \"age\": 19,\n" +
+                        "        \"groupName\": \"A\"\n" +
+                        "    },\n" +
                         "    {\n" +
                         "        \"id\": 1,\n" +
                         "        \"name\": \"Student1\",\n" +
