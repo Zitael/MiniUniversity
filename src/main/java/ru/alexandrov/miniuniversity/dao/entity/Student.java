@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "student", schema = "public")
-@ToString
 @EqualsAndHashCode(exclude = "groups")
+@ToString(exclude = "groups")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Student {
     @Id
@@ -33,4 +33,10 @@ public class Student {
     @JsonIgnore
     @JoinColumn(name = "groups_id")
     private Group groups;
+
+    public Student (String name, int age, Group groups){
+        this.age = age;
+        this.name = name;
+        this.groups = groups;
+    }
 }

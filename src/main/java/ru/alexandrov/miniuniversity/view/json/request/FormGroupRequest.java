@@ -1,5 +1,6 @@
 package ru.alexandrov.miniuniversity.view.json.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class FormGroupRequest {
-    private String group;
+    @JsonProperty("group")
+    private String groupName;
+    @JsonProperty("students")
     private List<Student> students;
 }

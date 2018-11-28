@@ -1,5 +1,6 @@
 package ru.alexandrov.miniuniversity.view.json.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class AddTeacherToGroupRequest {
-    private String teacher;
-    private String group;
+    @JsonProperty("teacher")
+    private String teacherName;
+    @JsonProperty("group")
+    private String groupName;
 }

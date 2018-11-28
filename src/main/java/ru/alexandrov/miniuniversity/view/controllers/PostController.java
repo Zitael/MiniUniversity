@@ -2,7 +2,6 @@ package ru.alexandrov.miniuniversity.view.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.alexandrov.miniuniversity.dao.dto.GroupDTO;
@@ -15,7 +14,6 @@ import ru.alexandrov.miniuniversity.view.json.request.*;
 import ru.alexandrov.miniuniversity.dao.repository.GroupRepository;
 import ru.alexandrov.miniuniversity.dao.repository.StudentRepository;
 import ru.alexandrov.miniuniversity.dao.repository.TeacherRepository;
-import ru.alexandrov.miniuniversity.view.json.response.ListResponse;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,24 +31,14 @@ public class PostController {
     @PostMapping("/formGroup")
     public @ResponseBody
     ResponseEntity formGroup(@RequestBody FormGroupRequest request) {
-        Group group = groupRepository.findByNameIsLike(request.getGroup());
+        Group group = groupRepository.findByNameIsLike(request.getGroupName());
         if (group != null) {
-            log.error("Group already exists with name {}", request.getGroup());
+            log.error("Group already exists with name {}", request.getGroupName());
             return badRequest().build();
         }
-        groupRepository.save(new Group().setName(request.getGroup()));
-        group = groupRepository.findByNameIsLike(request.getGroup());
-        if (group == null) {
-            log.error("Cant create new Group with name {}", request.getGroup());
-            return status(HttpStatus.NOT_MODIFIED).build();
-        }
+        group = groupRepository.save(new Group(request.getGroupName()));
         for (Student s : request.getStudents()) {
-            studentRepository.save(new Student().setGroups(group).setAge(s.getAge()).setName(s.getName()));
-            Student student = studentRepository.findByNameIsLikeAndAgeIs(s.getName(), s.getAge());
-            if (student == null) {
-                log.error("An error occured, cant add new Student with name {}", s.getName());
-                return status(HttpStatus.NOT_MODIFIED).build();
-            }
+            studentRepository.save(new Student(s.getName(), s.getAge(), group));
         }
         return ok().build();
     }
@@ -58,63 +46,54 @@ public class PostController {
     @PostMapping("/addTeacherToGroup")
     public @ResponseBody
     ResponseEntity addTeacherToGroup(@RequestBody AddTeacherToGroupRequest request) {
-        Group g = groupRepository.findByNameIsLike(request.getGroup());
-        if (g == null) {
-            log.error("Group has not found with name {}", request.getGroup());
+        Group group = groupRepository.findByNameIsLike(request.getGroupName());
+        if (group == null) {
+            log.error("Group has not found with name {}", request.getGroupName());
             return notFound().build();
         }
-        Teacher t = new Teacher().setName(request.getTeacher());
-        g.setTeachers(null);
-        t.getGroups().add(g);
+        Teacher t = new Teacher(request.getTeacherName());
+        t.getGroups().add(group);
         teacherRepository.save(t);
         return ok().build();
     }
 
     @PostMapping("/getGroupsByTeacher")
     public @ResponseBody
-    ResponseEntity getGroupsByTeacher(@RequestBody TeacherNameRequest request) {
-        Teacher t = teacherRepository.findFirstByNameIsLike(request.getTeacher());
+    ResponseEntity<Set<GroupDTO>> getGroupsByTeacher(@RequestBody TeacherNameRequest request) {
+        Teacher t = teacherRepository.findFirstByNameIsLike(request.getTeacherName());
         if (t == null) {
-            log.error("Teacher has not found with name {}", request.getTeacher());
+            log.error("Teacher has not found with name {}", request.getTeacherName());
             return notFound().build();
         }
-        TeacherDTO teacherDTO = new TeacherDTO().setId(t.getId()).setName(t.getName());
+        TeacherDTO teacherDTO = new TeacherDTO(t.getId(), t.getName());
         for (Group g : t.getGroups()) {
-            GroupDTO groupDTO = new GroupDTO()
-                    .setId(g.getId())
-                    .setName(g.getName());
+            GroupDTO groupDTO = new GroupDTO(g.getId(), g.getName());
             teacherDTO.getGroups().add(groupDTO);
         }
         Set<GroupDTO> result = teacherDTO.getGroups();
         if (result.size() > 0) {
-            return ok(new ListResponse().setList(result));
+            return ok(result);
         }
-        log.error("Groups has not found with teacher name {}", request.getTeacher());
+        log.error("Groups has not found with teacher name {}", request.getTeacherName());
         return notFound().build();
     }
 
     @PostMapping("/getStudentsByGroup")
     public @ResponseBody
-    ResponseEntity getStudentsByGroup(@RequestBody GroupNameRequest request) {
+    ResponseEntity<Set<StudentDTO>> getStudentsByGroup(@RequestBody GroupNameRequest request) {
         Group g = groupRepository.findByNameIsLike(request.getGroup());
         if (g == null) {
             log.error("Group has not found with name {}", request.getGroup());
             return notFound().build();
         }
-        GroupDTO groupDTO = new GroupDTO()
-                .setId(g.getId())
-                .setName(g.getName());
+        GroupDTO groupDTO = new GroupDTO(g.getId(), g.getName());
         for (Student s : g.getStudents()) {
-            StudentDTO studentDTO = new StudentDTO()
-                    .setAge(s.getAge())
-                    .setId(s.getId())
-                    .setName(s.getName())
-                    .setGroupName(g.getName());
+            StudentDTO studentDTO = new StudentDTO(s.getId(), s.getName(), s.getAge(), g.getName());
             groupDTO.getStudents().add(studentDTO);
         }
         Set<StudentDTO> result = groupDTO.getStudents();
         if (result.size() > 0) {
-            return ok(new ListResponse().setList(result));
+            return ok(result);
         }
         log.error("Students has not found with group name {}", request.getGroup());
         return notFound().build();
@@ -122,27 +101,23 @@ public class PostController {
 
     @PostMapping("/getStudentsByTeacher")
     public @ResponseBody
-    ResponseEntity getStudentsByTeacher(@RequestBody TeacherNameRequest request) {
-        Teacher t = teacherRepository.findFirstByNameIsLike(request.getTeacher());
+    ResponseEntity<Set<StudentDTO>> getStudentsByTeacher(@RequestBody TeacherNameRequest request) {
+        Teacher t = teacherRepository.findFirstByNameIsLike(request.getTeacherName());
         if (t == null) {
-            log.error("Teacher has not found with name {}", request.getTeacher());
+            log.error("Teacher has not found with name {}", request.getTeacherName());
             return notFound().build();
         }
         Set<StudentDTO> result = new HashSet<>();
         for (Group g : t.getGroups()) {
             for (Student s : g.getStudents()) {
-                StudentDTO studentDTO = new StudentDTO()
-                        .setAge(s.getAge())
-                        .setId(s.getId())
-                        .setName(s.getName())
-                        .setGroupName(g.getName());
+                StudentDTO studentDTO = new StudentDTO(s.getId(), s.getName(), s.getAge(), g.getName());
                 result.add(studentDTO);
             }
         }
         if (result.size() > 0) {
-            return ok(new ListResponse().setList(result));
+            return ok(result);
         }
-        log.error("Students has not found with teacher name {}", request.getTeacher());
+        log.error("Students has not found with teacher name {}", request.getTeacherName());
         return notFound().build();
     }
 }

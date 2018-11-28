@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "groups", schema = "public")
 @EqualsAndHashCode(exclude = {"students", "teachers"})
+@ToString(exclude = {"students", "teachers"})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Group {
     @Id
@@ -34,7 +36,7 @@ public class Group {
     @JsonIgnore
     private Set<Teacher> teachers = new HashSet<>();
 
-    public String toString() {
-        return name;
+    public Group (String name){
+        this.name = name;
     }
 }
