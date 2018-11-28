@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="maxim.alexandrov">
+        <createTable tableName="teacher">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="teacher_id"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="groups">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="groups_id"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="groups_and_teachers">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="groups_and_teachers_id"/>
+            </column>
+            <column name="groups_id" type="INTEGER"/>
+            <column name="teacher_id" type="INTEGER"/>
+        </createTable>
+        <createTable tableName="student">
+            <column name="id" type="SERIAL" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="student_id"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="age" type="INTEGER"/>
+            <column name="groups_id" type="INTEGER"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="student" baseColumnNames="groups_id"
+                                 constraintName="student_groups_id"
+                                 referencedTableName="groups" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="groups_and_teachers" baseColumnNames="groups_id"
+                                 constraintName="groups_and_teachers_groups_id"
+                                 referencedTableName="groups" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="groups_and_teachers" baseColumnNames="teacher_id"
+                                 constraintName="groups_and_teachers_teacher_id"
+                                 referencedTableName="teacher" referencedColumnNames="id"/>
+
+    </changeSet>
+    <changeSet id="2" author="maxim.alexandrov">
+        <insert tableName="teacher">
+            <column name="name" value="Teacher1"/>
+        </insert>
+        <insert tableName="teacher">
+            <column name="name" value="Teacher2"/>
+        </insert>
+        <insert tableName="teacher">
+            <column name="name" value="Teacher3"/>
+        </insert>
+        <insert tableName="groups">
+            <column name="name" value="A"/>
+        </insert>
+        <insert tableName="groups">
+            <column name="name" value="B"/>
+        </insert>
+        <insert tableName="student">
+            <column name="name" value="Student1"/>
+            <column name="age" value="18"/>
+            <column name="groups_id" value="1"/>
+        </insert>
+        <insert tableName="student">
+            <column name="name" value="Student2"/>
+            <column name="age" value="19"/>
+            <column name="groups_id" value="1"/>
+        </insert>
+        <insert tableName="student">
+            <column name="name" value="Student3"/>
+            <column name="age" value="20"/>
+            <column name="groups_id" value="2"/>
+        </insert>
+        <insert tableName="groups_and_teachers">
+            <column name="groups_id" value="1"/>
+            <column name="teacher_id" value="1"/>
+        </insert>
+        <insert tableName="groups_and_teachers">
+            <column name="groups_id" value="1"/>
+            <column name="teacher_id" value="2"/>
+        </insert>
+        <insert tableName="groups_and_teachers">
+            <column name="groups_id" value="2"/>
+            <column name="teacher_id" value="3"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
